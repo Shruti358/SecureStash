@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SecureStash
 
 A React Native application for secure password and credential management with a modern, user-friendly interface.
