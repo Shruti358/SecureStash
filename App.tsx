@@ -1,9 +1,8 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { enableScreens } from "react-native-screens";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 // Enable screens for better performance
 enableScreens();
@@ -11,7 +10,7 @@ enableScreens();
 // Import screens
 import SignupScreen from "./Screens/SignupScreen";
 import LoginScreen from "./Screens/LoginScreen";
-import HomeScreen from "./Screens/HomeScreen";
+import Home from "./Screens/HomeScreen";
 
 export type RootStackParamList = {
   Signup: undefined;
@@ -23,15 +22,15 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Signup">
           <Stack.Screen name="Signup" component={SignupScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Home" component={Home} />
         </Stack.Navigator>
       </NavigationContainer>
-    </GestureHandlerRootView>
+    </View>
   );
 }
 
