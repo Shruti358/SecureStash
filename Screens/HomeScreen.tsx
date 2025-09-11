@@ -1,24 +1,19 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   FlatList,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import TopNavbar from "../components/TopNavbar";
 
 // --- Screens ---
-export const HomeScreen = () => {
+export const HomeScreen = ({ navigation }: { navigation: any }) => {
   const [tab, setTab] = useState("Suggested");
-  const [search, setSearch] = useState("");
-  const [showAccountMenu, setShowAccountMenu] = useState(false);
-  const [showSearchBar, setShowSearchBar] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const searchInputRef = useRef<TextInput>(null);
 
   const dummyFiles = [
     { id: "1", name: "Report.pdf" },
@@ -26,111 +21,9 @@ export const HomeScreen = () => {
     { id: "3", name: "Image.png" },
   ];
 
-  const filteredFiles = dummyFiles.filter((f) =>
-    f.name.toLowerCase().includes(search.trim().toLowerCase())
-  );
-
   return (
     <View style={styles.container}>
-      {/* Title */}
-      <Text style={styles.title}>SecureStash</Text>
-
-      {/* Search and Menu Bar */}
-      <View style={styles.searchMenuBar}>
-        <View style={styles.searchContainer}>
-          <View style={styles.searchInputContainer}>
-            <Icon name="magnify" size={20} color="#6b7280" />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search files..."
-              placeholderTextColor="#6b7280"
-              ref={searchInputRef}
-              value={search}
-              onChangeText={setSearch}
-            />
-          </View>
-        </View>
-        
-        <View style={styles.menuIcons}>
-          <TouchableOpacity 
-            style={styles.menuIcon} 
-            onPress={() => setShowAccountMenu(!showAccountMenu)}
-          >
-            <Icon name="menu" size={20} color="#6b7280" />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.menuIcon}
-            onPress={() => setShowUserMenu(!showUserMenu)}
-          >
-            <Icon name="account-circle" size={20} color="#6b7280" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {showAccountMenu && (
-        <View style={styles.accountMenu}>
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="home" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="star" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Starred</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="clock" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Recent</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="share" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Shared with me</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="trash-can" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Trash</Text>
-          </TouchableOpacity>
-          <View style={styles.menuDivider} />
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="cog" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.accountMenuItem} onPress={() => setShowAccountMenu(false)}>
-            <Icon name="help-circle" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Help & feedback</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* User Account Menu */}
-      {showUserMenu && (
-        <View style={styles.userMenu}>
-          <View style={styles.userInfo}>
-            <Icon name="account-circle" size={40} color="#6b7280" />
-            <View style={styles.userDetails}>
-              <Text style={styles.userName}>Hi, Dummy Account</Text>
-              <Text style={styles.userEmail}>dummy.account@example.com</Text>
-            </View>
-          </View>
-          <View style={styles.menuDivider} />
-          <TouchableOpacity style={styles.userMenuItem} onPress={() => setShowUserMenu(false)}>
-            <Icon name="account-edit" size={18} color="#6b7280" />
-            <Text style={styles.userMenuText}>Manage your account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.userMenuItem} onPress={() => setShowUserMenu(false)}>
-            <Icon name="cog" size={18} color="#6b7280" />
-            <Text style={styles.userMenuText}>Account settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.userMenuItem} onPress={() => setShowUserMenu(false)}>
-            <Icon name="help-circle" size={18} color="#6b7280" />
-            <Text style={styles.userMenuText}>Help & support</Text>
-          </TouchableOpacity>
-          <View style={styles.menuDivider} />
-          <TouchableOpacity style={styles.userMenuItem} onPress={() => setShowUserMenu(false)}>
-            <Icon name="logout" size={18} color="#ef4444" />
-            <Text style={[styles.userMenuText, { color: "#ef4444" }]}>Sign out</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <TopNavbar navigation={navigation} />
 
       {/* Suggested / Activity Tabs */}
       <View style={styles.tabRow}>
@@ -148,7 +41,7 @@ export const HomeScreen = () => {
 
       {/* File List */}
       <FlatList
-        data={filteredFiles}
+        data={dummyFiles}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.fileItem}>
@@ -191,15 +84,25 @@ export const HomeScreen = () => {
   );
 };
 
-const StarredScreen = () => (
-  <View style={styles.centered}>
-    <Text style={styles.placeholder}> Starred files will appear here</Text>
+const StarredScreen = ({ navigation }: { navigation: any }) => (
+  <View style={styles.container}>
+    <TopNavbar navigation={navigation} />
+    <View style={styles.centered}>
+      <Icon name="star" size={48} color="#22c55e" />
+      <Text style={styles.pageTitle}>Starred Files</Text>
+      <Text style={styles.placeholder}>Your starred files will appear here</Text>
+    </View>
   </View>
 );
 
-const SharedScreen = () => (
-  <View style={styles.centered}>
-    <Text style={styles.placeholder}> Shared files will appear here</Text>
+const SharedScreen = ({ navigation }: { navigation: any }) => (
+  <View style={styles.container}>
+    <TopNavbar navigation={navigation} />
+    <View style={styles.centered}>
+      <Icon name="account-group" size={48} color="#22c55e" />
+      <Text style={styles.pageTitle}>Shared Files</Text>
+      <Text style={styles.placeholder}>Files shared with you will appear here</Text>
+    </View>
   </View>
 );
 
@@ -459,6 +362,12 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 16,
     color: "#6b7280",
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#22c55e",
+    marginBottom: 16,
   },
   iconText: {
     fontSize: 18,
