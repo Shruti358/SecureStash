@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useAuth } from "../contexts/AuthContext";
 
 type RootStackParamList = {
   Signup: undefined;
@@ -15,6 +16,43 @@ export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await signIn(email, password);
+      // Navigation will be handled by auth state change in App.tsx
+    } catch (error: any) {
+      setIsLoading(false);
+      let errorMessage = "An error occurred during login";
+      
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = "No user found with this email";
+          break;
+        case 'auth/wrong-password':
+          errorMessage = "Incorrect password";
+          break;
+        case 'auth/invalid-email':
+          errorMessage = "Invalid email address";
+          break;
+        case 'auth/user-disabled':
+          errorMessage = "This account has been disabled";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+      
+      Alert.alert("Login Failed", errorMessage);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -47,8 +85,14 @@ export default function LoginScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity 
+        style={[styles.button, isLoading && styles.buttonDisabled]} 
+        onPress={handleLogin}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>
+          {isLoading ? "Logging in..." : "Login"}
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.link} onPress={() => navigation.navigate("Signup")}>
@@ -80,6 +124,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   button: { backgroundColor: "green", padding: 15, borderRadius: 8, width: "80%", alignItems: "center" },
+  buttonDisabled: { opacity: 0.6 },
   buttonText: { color: "#fff", fontWeight: "bold" },
   link: { marginTop: 15, color: "#007bff" }
 });

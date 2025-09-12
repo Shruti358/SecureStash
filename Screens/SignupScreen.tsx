@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useAuth } from "../contexts/AuthContext";
 
 type RootStackParamList = {
   Signup: undefined;
@@ -14,7 +15,63 @@ type Props = NativeStackScreenProps<RootStackParamList, "Signup">;
 export default function SignupScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp } = useAuth();
+
+  const validateEmail = (emailAddress: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(emailAddress);
+  };
+
+  const handleSignup = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters long");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await signUp(email, password);
+      // Navigation will be handled by auth state change in App.tsx
+    } catch (error: any) {
+      setIsLoading(false);
+      let errorMessage = "An error occurred during signup";
+      
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = "This email is already registered";
+          break;
+        case 'auth/invalid-email':
+          errorMessage = "Invalid email address";
+          break;
+        case 'auth/weak-password':
+          errorMessage = "Password is too weak";
+          break;
+        default:
+          errorMessage = error.message || errorMessage;
+      }
+      
+      Alert.alert("Signup Failed", errorMessage);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -26,6 +83,8 @@ export default function SignupScreen({ navigation }: Props) {
         placeholder="Enter your email"
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <View style={styles.passwordContainer}>
         <TextInput
@@ -47,8 +106,34 @@ export default function SignupScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Home")}>
-        <Text style={styles.buttonText}>Signup</Text>
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Confirm your password"
+          secureTextEntry={!showConfirmPassword}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        <TouchableOpacity 
+          style={styles.eyeIcon}
+          onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+        >
+          <Icon 
+            name={showConfirmPassword ? "eye-off" : "eye"} 
+            size={20} 
+            color="#6b7280" 
+          />
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity 
+        style={[styles.button, isLoading && styles.buttonDisabled]} 
+        onPress={handleSignup}
+        disabled={isLoading}
+      >
+        <Text style={styles.buttonText}>
+          {isLoading ? "Creating Account..." : "Signup"}
+        </Text>
       </TouchableOpacity>
 
       <Text style={styles.link} onPress={() => navigation.navigate("Login")}>
@@ -80,6 +165,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   button: { backgroundColor: "green", padding: 15, borderRadius: 8, width: "80%", alignItems: "center" },
+  buttonDisabled: { opacity: 0.6 },
   buttonText: { color: "#fff", fontWeight: "bold" },
   link: { marginTop: 15, color: "#007bff" }
 });

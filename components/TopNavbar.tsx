@@ -5,11 +5,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useAuth } from "../contexts/AuthContext";
 
 interface TopNavbarProps {
-  navigation: any; // For tab navigation
+  navigation: any;
 }
 
 const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
@@ -17,12 +19,20 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
+  const { signOut, user } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      setShowUserMenu(false);
+    } catch (error: any) {
+      Alert.alert("Error", "Failed to sign out. Please try again.");
+    }
+  };
 
   return (
     <View>
-      {/* Search and Menu Bar */}
       <View style={styles.searchMenuBar}>
-        {/* Left: Menu Icon */}
         <View style={styles.leftSection}>
           <TouchableOpacity
             style={styles.menuIcon}
@@ -32,7 +42,6 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Center: Search Bar */}
         <View style={styles.centerSection}>
           <View style={styles.searchInputContainer}>
             <Icon name="magnify" size={20} color="#5f6368" />
@@ -47,7 +56,6 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Right: Account Icon */}
         <View style={styles.rightSection}>
           <TouchableOpacity
             style={styles.menuIcon}
@@ -84,95 +92,31 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
             style={styles.accountMenuItem}
             onPress={() => {
               setShowAccountMenu(false);
-              // Recent - perhaps add later
-            }}
-          >
-            <Icon name="clock" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Recent</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
               navigation.navigate('Shared');
             }}
           >
             <Icon name="share" size={18} color="#6b7280" />
             <Text style={styles.accountMenuText}>Shared with me</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
-              // Trash
-            }}
-          >
-            <Icon name="trash-can" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Trash</Text>
-          </TouchableOpacity>
-          <View style={styles.menuDivider} />
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
-              // Settings
-            }}
-          >
-            <Icon name="cog" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
-              // Help
-            }}
-          >
-            <Icon name="help-circle" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Help & feedback</Text>
-          </TouchableOpacity>
         </View>
       )}
 
-      {/* User Account Menu */}
       {showUserMenu && (
         <View style={styles.userMenu}>
           <View style={styles.userInfo}>
             <Icon name="account-circle" size={40} color="#6b7280" />
             <View style={styles.userDetails}>
-              <Text style={styles.userName}>Hi, Dummy Account</Text>
-              <Text style={styles.userEmail}>dummy.account@example.com</Text>
+              <Text style={styles.userName}>Hi, {user?.email?.split('@')[0] || 'User'}</Text>
+              <Text style={styles.userEmail}>{user?.email || 'user@example.com'}</Text>
             </View>
           </View>
           <View style={styles.menuDivider} />
           <TouchableOpacity
             style={styles.userMenuItem}
-            onPress={() => setShowUserMenu(false)}
-          >
-            <Icon name="account-edit" size={18} color="#6b7280" />
-            <Text style={styles.userMenuText}>Manage your account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.userMenuItem}
-            onPress={() => setShowUserMenu(false)}
-          >
-            <Icon name="cog" size={18} color="#6b7280" />
-            <Text style={styles.userMenuText}>Account settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.userMenuItem}
-            onPress={() => setShowUserMenu(false)}
-          >
-            <Icon name="help-circle" size={18} color="#6b7280" />
-            <Text style={styles.userMenuText}>Help & support</Text>
-          </TouchableOpacity>
-          <View style={styles.menuDivider} />
-          <TouchableOpacity
-            style={styles.userMenuItem}
-            onPress={() => setShowUserMenu(false)}
+            onPress={handleSignOut}
           >
             <Icon name="logout" size={18} color="#ef4444" />
-                        <Text style={styles.signOutText}>Sign out</Text>
+            <Text style={styles.signOutText}>Sign out</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -308,11 +252,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
-  },
-  userMenuText: {
-    fontSize: 14,
-    color: "#111827",
-    marginLeft: 12,
   },
   signOutText: {
     fontSize: 14,

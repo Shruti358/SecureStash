@@ -9,6 +9,8 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TopNavbar from "../components/TopNavbar";
+import StarredScreen from "./StarredScreen";
+import SharedScreen from "./SharedScreen";
 
 // --- Screens ---
 export const HomeScreen = ({ navigation }: { navigation: any }) => {
@@ -84,28 +86,6 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
   );
 };
 
-const StarredScreen = ({ navigation }: { navigation: any }) => (
-  <View style={styles.container}>
-    <TopNavbar navigation={navigation} />
-    <View style={styles.centered}>
-      <Icon name="star" size={48} color="#22c55e" />
-      <Text style={styles.pageTitle}>Starred Files</Text>
-      <Text style={styles.placeholder}>Your starred files will appear here</Text>
-    </View>
-  </View>
-);
-
-const SharedScreen = ({ navigation }: { navigation: any }) => (
-  <View style={styles.container}>
-    <TopNavbar navigation={navigation} />
-    <View style={styles.centered}>
-      <Icon name="account-group" size={48} color="#22c55e" />
-      <Text style={styles.pageTitle}>Shared Files</Text>
-      <Text style={styles.placeholder}>Files shared with you will appear here</Text>
-    </View>
-  </View>
-);
-
 // --- Bottom Tab Navigator ---
 const Tab = createBottomTabNavigator();
 
@@ -141,93 +121,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ecfdf5",
     padding: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#22c55e",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-  searchMenuBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  searchIconButton: {
-    padding: 8,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f9fafb",
-    borderRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    maxWidth: 280,
-  },
-  menuIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  menuIcon: {
-    padding: 8,
-    marginLeft: 4,
-  },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 6,
-    fontSize: 13,
-    color: "#111827",
-  },
-  accountMenu: {
-    position: "absolute",
-    top: 120,
-    right: 16,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 8,
-    zIndex: 1000,
-  },
-  accountMenuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minWidth: 160,
-  },
-  accountMenuText: {
-    fontSize: 14,
-    color: "#111827",
-    marginLeft: 12,
   },
   fab: {
     position: "absolute",
@@ -272,57 +165,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontWeight: "500",
   },
-  menuDivider: {
-    height: 1,
-    backgroundColor: "#e5e7eb",
-    marginVertical: 4,
-  },
-  userMenu: {
-    position: "absolute",
-    top: 120,
-    right: 16,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingVertical: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 8,
-    zIndex: 1000,
-    minWidth: 200,
-  },
-  userInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  userDetails: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#111827",
-  },
-  userEmail: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginTop: 2,
-  },
-  userMenuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  userMenuText: {
-    fontSize: 14,
-    color: "#111827",
-    marginLeft: 12,
-  },
   tabRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -353,23 +195,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 14,
     color: "#111827",
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  placeholder: {
-    fontSize: 16,
-    color: "#6b7280",
-  },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#22c55e",
-    marginBottom: 16,
-  },
-  iconText: {
-    fontSize: 18,
   },
 });
