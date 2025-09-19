@@ -5,12 +5,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Pressable,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TopNavbar from "../components/TopNavbar";
 import StarredScreen from "./StarredScreen";
 import SharedScreen from "./SharedScreen";
+
+// Define the tab param list to align with React Navigation types
+type RootTabParamList = {
+  Home: undefined;
+  Starred: undefined;
+  Shared: undefined;
+};
 
 // --- Screens ---
 export const HomeScreen = ({ navigation }: { navigation: any }) => {
@@ -49,9 +57,21 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
           <View style={styles.fileItem}>
             <Icon name="file-document-outline" size={20} color="#6b7280" />
             <Text style={styles.fileText}>{item.name}</Text>
+            <View style={{ flex: 1 }} />
+            <TouchableOpacity
+              onPress={() => {}}
+              accessibilityLabel="File password options"
+            >
+              <Icon name="lock-outline" size={14} color="#6b7280" />
+            </TouchableOpacity>
           </View>
         )}
       />
+
+      {/* Backdrop for Plus Menu */}
+      {showPlusMenu && (
+        <Pressable style={styles.backdrop} onPress={() => setShowPlusMenu(false)} />
+      )}
 
       {/* Floating Action Button */}
       <TouchableOpacity 
@@ -87,7 +107,7 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
 };
 
 // --- Bottom Tab Navigator ---
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const getTabBarIcon = (routeName: string, color: string, size?: number) => {
   let iconName: string = "help-circle";
@@ -99,6 +119,7 @@ const getTabBarIcon = (routeName: string, color: string, size?: number) => {
 
 export default function Home() {
   return (
+    // @ts-ignore - React Navigation v7 typing mismatch with JSX children in this TS version
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
@@ -121,6 +142,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ecfdf5",
     padding: 12,
+  },
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    zIndex: 900,
   },
   fab: {
     position: "absolute",

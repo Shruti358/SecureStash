@@ -17,23 +17,26 @@ export default function LoginScreen({ navigation }: Props) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, resetPassword } = useAuth();
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
       Alert.alert("Error", "Please enter both email and password");
       return;
     }
 
     try {
       setIsLoading(true);
-      await signIn(email, password);
-      // Navigation will be handled by auth state change in App.tsx
+      await signIn(normalizedEmail, password);
+      // Navigation handled by auth state change in App.tsx
     } catch (error: any) {
       setIsLoading(false);
       let errorMessage = "An error occurred during login";
-      
-      switch (error.code) {
+      const code = error?.code || "";
+
+      switch (code) {
         case 'auth/user-not-found':
           errorMessage = "No user found with this email";
           break;
@@ -43,14 +46,34 @@ export default function LoginScreen({ navigation }: Props) {
         case 'auth/invalid-email':
           errorMessage = "Invalid email address";
           break;
+        case 'auth/invalid-credential':
+          errorMessage = "Invalid or expired credential. Re-enter email and password and try again.";
+          break;
         case 'auth/user-disabled':
           errorMessage = "This account has been disabled";
           break;
         default:
-          errorMessage = error.message || errorMessage;
+          errorMessage = error?.message || errorMessage;
       }
-      
+
       Alert.alert("Login Failed", errorMessage);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      Alert.alert("Reset Password", "Enter your email above to receive a reset link.");
+      return;
+    }
+    try {
+      await resetPassword(normalizedEmail);
+      Alert.alert("Reset Email Sent", "Check your inbox for a password reset link.");
+    } catch (error: any) {
+      let message = "Unable to send reset email";
+      if (error?.code === 'auth/user-not-found') message = "No user found with this email";
+      else if (error?.code === 'auth/invalid-email') message = "Invalid email address";
+      Alert.alert("Reset Failed", message);
     }
   };
 
@@ -64,6 +87,10 @@ export default function LoginScreen({ navigation }: Props) {
         placeholder="Enter your email"
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        textContentType="emailAddress"
       />
       <View style={styles.passwordContainer}>
         <TextInput
@@ -72,6 +99,9 @@ export default function LoginScreen({ navigation }: Props) {
           secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="password"
         />
         <TouchableOpacity 
           style={styles.eyeIcon}
@@ -84,6 +114,10 @@ export default function LoginScreen({ navigation }: Props) {
           />
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity onPress={handleResetPassword}>
+        <Text style={styles.forgot}>Forgot password?</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity 
         style={[styles.button, isLoading && styles.buttonDisabled]} 
@@ -123,6 +157,7 @@ const styles = StyleSheet.create({
   eyeIcon: {
     padding: 10,
   },
+  forgot: { alignSelf: 'flex-end', width: '80%', color: '#007bff', marginBottom: 12 },
   button: { backgroundColor: "green", padding: 15, borderRadius: 8, width: "80%", alignItems: "center" },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: "#fff", fontWeight: "bold" },

@@ -27,12 +27,14 @@ export default function SignupScreen({ navigation }: Props) {
   };
 
   const handleSignup = async () => {
-    if (!email || !password || !confirmPassword) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    if (!validateEmail(email)) {
+    if (!validateEmail(normalizedEmail)) {
       Alert.alert("Error", "Please enter a valid email address");
       return;
     }
@@ -49,13 +51,14 @@ export default function SignupScreen({ navigation }: Props) {
 
     try {
       setIsLoading(true);
-      await signUp(email, password);
-      // Navigation will be handled by auth state change in App.tsx
+      await signUp(normalizedEmail, password);
+      // Navigation handled by auth state change in App.tsx
     } catch (error: any) {
       setIsLoading(false);
       let errorMessage = "An error occurred during signup";
-      
-      switch (error.code) {
+      const code = error?.code || "";
+
+      switch (code) {
         case 'auth/email-already-in-use':
           errorMessage = "This email is already registered";
           break;
@@ -65,10 +68,13 @@ export default function SignupScreen({ navigation }: Props) {
         case 'auth/weak-password':
           errorMessage = "Password is too weak";
           break;
+        case 'auth/invalid-credential':
+          errorMessage = "Invalid or expired credential. Re-enter details and try again.";
+          break;
         default:
-          errorMessage = error.message || errorMessage;
+          errorMessage = error?.message || errorMessage;
       }
-      
+
       Alert.alert("Signup Failed", errorMessage);
     }
   };
@@ -85,6 +91,8 @@ export default function SignupScreen({ navigation }: Props) {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        autoCorrect={false}
+        textContentType="emailAddress"
       />
       <View style={styles.passwordContainer}>
         <TextInput
@@ -93,6 +101,9 @@ export default function SignupScreen({ navigation }: Props) {
           secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="newPassword"
         />
         <TouchableOpacity 
           style={styles.eyeIcon}
@@ -113,6 +124,9 @@ export default function SignupScreen({ navigation }: Props) {
           secureTextEntry={!showConfirmPassword}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="newPassword"
         />
         <TouchableOpacity 
           style={styles.eyeIcon}

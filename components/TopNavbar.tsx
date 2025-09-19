@@ -6,6 +6,12 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Modal,
+  Pressable,
+  ScrollView,
+  Animated,
+  Easing,
+  Dimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useAuth } from "../contexts/AuthContext";
@@ -16,10 +22,43 @@ interface TopNavbarProps {
 
 const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
   const [search, setSearch] = useState("");
-  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [showHierarchySheet, setShowHierarchySheet] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
   const { signOut, user } = useAuth();
+
+  // Drawer animation (left-to-right)
+  const drawerWidth = useRef(Dimensions.get('window').width * 0.85).current;
+  const drawerX = useRef(new Animated.Value(-drawerWidth)).current;
+
+  // Demo storage usage values (replace with real values when available)
+  const usedStorageGB = 3.2;
+  const totalStorageGB = 15;
+  const usedPct = Math.min(100, Math.max(0, (usedStorageGB / totalStorageGB) * 100));
+
+  const openDrawer = () => {
+    setShowHierarchySheet(true);
+    requestAnimationFrame(() => {
+      drawerX.setValue(-drawerWidth);
+      Animated.timing(drawerX, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }).start();
+    });
+  };
+
+  const closeDrawer = () => {
+    Animated.timing(drawerX, {
+      toValue: -drawerWidth,
+      duration: 200,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) setShowHierarchySheet(false);
+    });
+  };
 
   const handleSignOut = async () => {
     try {
@@ -35,10 +74,11 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
       <View style={styles.searchMenuBar}>
         <View style={styles.leftSection}>
           <TouchableOpacity
+            onPress={openDrawer}
             style={styles.menuIcon}
-            onPress={() => setShowAccountMenu(!showAccountMenu)}
+            accessibilityLabel="Open hierarchy"
           >
-            <Icon name="menu" size={24} color="#5f6368" />
+            <Icon name="file-tree" size={24} color="#5f6368" />
           </TouchableOpacity>
         </View>
 
@@ -47,11 +87,15 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
             <Icon name="magnify" size={20} color="#5f6368" />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search files..."
+              placeholder="Search..."
               placeholderTextColor="#6b7280"
               ref={searchInputRef}
               value={search}
               onChangeText={setSearch}
+              numberOfLines={1}
+              autoCapitalize="none"
+              autoCorrect={false}
+              allowFontScaling
             />
           </View>
         </View>
@@ -66,39 +110,63 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ navigation }) => {
         </View>
       </View>
 
-      {showAccountMenu && (
-        <View style={styles.accountMenu}>
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
-              navigation.navigate('Home');
-            }}
-          >
-            <Icon name="home" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
-              navigation.navigate('Starred');
-            }}
-          >
-            <Icon name="star" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Starred</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.accountMenuItem}
-            onPress={() => {
-              setShowAccountMenu(false);
-              navigation.navigate('Shared');
-            }}
-          >
-            <Icon name="share" size={18} color="#6b7280" />
-            <Text style={styles.accountMenuText}>Shared with me</Text>
-          </TouchableOpacity>
-        </View>
+      {/* Hierarchy Drawer (left slide-in) */}
+      <Modal
+        visible={showHierarchySheet}
+        animationType="none"
+        transparent
+        onRequestClose={closeDrawer}
+      >
+        <Pressable style={styles.sheetBackdrop} onPress={closeDrawer} />
+        <Animated.View style={[styles.drawerContainer, { transform: [{ translateX: drawerX }] }]}>
+          <View style={styles.sheetHeader}>
+            <Icon name="folder" size={22} color="#111827" />
+            <Text style={styles.sheetTitle}>Browse</Text>
+          </View>
+          <ScrollView contentContainerStyle={styles.sheetContent}>
+            <TouchableOpacity style={styles.sheetItem} onPress={closeDrawer}>
+              <Icon name="history" size={20} color="#6b7280" />
+              <Text style={styles.sheetItemText}>Recent</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetItem} onPress={closeDrawer}>
+              <Icon name="upload" size={20} color="#6b7280" />
+              <Text style={styles.sheetItemText}>Uploads</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetItem} onPress={closeDrawer}>
+              <Icon name="trash-can-outline" size={20} color="#ef4444" />
+              <Text style={styles.sheetItemText}>Bin</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetItem} onPress={closeDrawer}>
+              <Icon name="email-alert-outline" size={20} color="#f59e0b" />
+              <Text style={styles.sheetItemText}>Spam</Text>
+            </TouchableOpacity>
+            <View style={styles.menuDivider} />
+            <TouchableOpacity style={styles.sheetItem} onPress={closeDrawer}>
+              <Icon name="cog-outline" size={20} color="#6b7280" />
+              <Text style={styles.sheetItemText}>Settings</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetItem} onPress={closeDrawer}>
+              <Icon name="help-circle-outline" size={20} color="#6b7280" />
+              <Text style={styles.sheetItemText}>Help & feedback</Text>
+            </TouchableOpacity>
+            <View style={styles.menuDivider} />
+            <View style={styles.sheetItem}>
+              <Icon name="harddisk" size={20} color="#6b7280" />
+              <Text style={styles.sheetItemText}>Storage</Text>
+            </View>
+            <View style={styles.storageBarContainer}>
+              <View style={styles.storageBarBackground}>
+                <View style={[styles.storageBarFill, { width: '32%' }]} />
+              </View>
+              <Text style={styles.storageBarText}>4.8 GB of 15 GB used</Text>
+            </View>
+          </ScrollView>
+        </Animated.View>
+      </Modal>
+
+      {/* User menu backdrop to close on outside tap */}
+      {showUserMenu && (
+        <Pressable style={styles.userBackdrop} onPress={() => setShowUserMenu(false)} />
       )}
 
       {showUserMenu && (
@@ -130,9 +198,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
     marginBottom: 16,
     width: '100%',
+    marginTop: 32,
   },
   leftSection: {
     flex: 0.15,
@@ -153,14 +222,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     flex: 1,
     borderWidth: 1,
     borderColor: "#e0e0e0",
     width: '100%',
-    height: 48,
+    height: 40,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -179,38 +248,84 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: "#202124",
-    height: 24,
+    // remove fixed height to avoid clipping placeholder on some devices
+    lineHeight: 20,
+    paddingVertical: 0,
   },
-  accountMenu: {
-    position: "absolute",
-    top: 70,
-    left: 20,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 8,
-    zIndex: 1000,
-    minWidth: 200,
+  sheetBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
-  accountMenuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
+  drawerContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: '85%',
+    backgroundColor: '#fff',
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 2, height: 0 },
+    elevation: 12,
+  },
+  sheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    minWidth: 160,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
   },
-  accountMenuText: {
-    fontSize: 14,
-    color: "#111827",
+  sheetTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginLeft: 8,
+  },
+  sheetContent: {
+    paddingVertical: 8,
+  },
+  sheetSectionHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  sheetSectionHeaderText: {
+    fontSize: 12,
+    color: '#6b7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  sheetItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  sheetItemText: {
     marginLeft: 12,
+    fontSize: 14,
+    color: '#111827',
   },
   menuDivider: {
     height: 1,
     backgroundColor: "#e5e7eb",
     marginVertical: 4,
+  },
+  userBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
+    zIndex: 900,
   },
   userMenu: {
     position: "absolute",
@@ -257,6 +372,47 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#ef4444",
     marginLeft: 12,
+  },
+  storageRow: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  storageBar: {
+    height: 8,
+    backgroundColor: '#e5e7eb',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  storageFill: {
+    height: 8,
+    backgroundColor: '#22c55e',
+  },
+  storageText: {
+    marginTop: 6,
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  storageBarContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  storageBarBackground: {
+    width: '100%',
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#e5e7eb',
+    overflow: 'hidden',
+  },
+  storageBarFill: {
+    height: '100%',
+    backgroundColor: '#22c55e',
+  },
+  storageBarText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#6b7280',
   },
 });
 
