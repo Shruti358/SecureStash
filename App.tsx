@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
 import { StyleSheet, View } from "react-native";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { FileProvider } from "./contexts/FileContext";
 
 // Enable screens for better performance
 enableScreens();
@@ -37,6 +38,7 @@ const AppNavigator = () => {
       <Stack.Navigator 
         initialRouteName={user ? "Home" : "Login"}
         screenOptions={{ headerShown: false }}
+        id="root"
       >
         {user ? (
           // Authenticated user screens
@@ -56,9 +58,11 @@ const AppNavigator = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <View style={styles.container}>
-        <AppNavigator />
-      </View>
+      <FileProvider>
+        <View style={styles.container}>
+          <AppNavigator />
+        </View>
+      </FileProvider>
     </AuthProvider>
   );
 }
