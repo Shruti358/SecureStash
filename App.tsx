@@ -3,7 +3,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
 import { StyleSheet, View } from "react-native";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./AuthContext";
+import { storage } from "./firebaseConfig";
+import ImageUpload from "./ImageUpload";
+
+export default function App() {
+  return <ImageUpload />;
+}
 
 // Enable screens for better performance
 enableScreens();
