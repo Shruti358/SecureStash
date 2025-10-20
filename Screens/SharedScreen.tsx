@@ -6,6 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { shareFileByEmail, subscribeSharedWithMe, subscribeSharesForFile, updateSharePermission, revokeShare, SharePermission } from '../services/shareService';
 import { getFileIcon, getFileUrl } from '../services/fileService';
 import { Linking } from 'react-native';
+import InputModal from '../components/InputModal';
+import { verifyFilePassword } from '../services/fileProtectionService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SharedScreenProps { navigation: any; route?: any; }
@@ -245,6 +247,9 @@ const SharedScreen: React.FC<SharedScreenProps> = ({ navigation, route }) => {
 
 function SharedRow({ item }: { item: any }) {
   const meta = getFileIcon(item.name, item.kind, item.contentType);
+  const [promptVisible, setPromptVisible] = React.useState(false);
+  const [onConfirm, setOnConfirm] = React.useState<(v:string)=>void>(()=>()=>{});
+  const [title, setTitle] = React.useState('');
   return (
     <View style={styles.fileItem}>
       <Icon name={meta.icon} size={24} color={meta.color} />
@@ -254,9 +259,25 @@ function SharedRow({ item }: { item: any }) {
         <Icon name={item.permission==='write' ? 'pencil-outline' : 'eye-outline'} size={14} color="#2563eb" />
         <Text style={styles.permBadgeText}>{item.permission}</Text>
       </View>
-      <TouchableOpacity onPress={async ()=>{ try { const url = await getFileUrl(item.path, 300); Linking.openURL(url); } catch (e:any) { Alert.alert('Open failed', e?.message || String(e)); } }}>
+      <TouchableOpacity onPress={async ()=>{ 
+        try { 
+          if (item.password_protected) {
+            setTitle('Enter file password');
+            setOnConfirm(()=>async (val:string)=>{ 
+              setPromptVisible(false);
+              const ok = await verifyFilePassword(item.id, val);
+              if (!ok) { Alert.alert('Incorrect password'); return; }
+              const url = await getFileUrl(item.path, 300); Linking.openURL(url);
+            });
+            setPromptVisible(true);
+            return;
+          }
+          const url = await getFileUrl(item.path, 300); Linking.openURL(url); 
+        } catch (e:any) { Alert.alert('Open failed', e?.message || String(e)); } 
+      }}>
         <Icon name="open-in-new" size={20} color="#6b7280" style={styles.ml8} />
       </TouchableOpacity>
+      <InputModal visible={promptVisible} title={title} placeholder="File password" secureTextEntry onConfirm={onConfirm} onCancel={()=>setPromptVisible(false)} />
     </View>
   );
 }

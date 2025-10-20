@@ -41,6 +41,7 @@ export type SharedFileRecord = {
   owner_id?: string;
   ownerEmail?: string;
   permission: SharePermission;
+  password_protected?: boolean;
 };
 
 // Subscribe to all files shared with a specific email address.
@@ -70,6 +71,7 @@ export function subscribeSharedWithMe(email: string, onChange: (rows: SharedFile
             owner_id: d.owner_id,
             ownerEmail,
             permission,
+            password_protected: d.password_protected === true,
           } as SharedFileRecord;
         });
         const rows = (await Promise.all(tasks)).filter(Boolean) as SharedFileRecord[];

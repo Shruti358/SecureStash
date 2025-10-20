@@ -10,6 +10,8 @@ import { Alert } from "react-native";
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { getFileUrl, getFileIcon, moveToBin } from '../services/fileService';
+import { verifyFilePassword, setFilePassword, clearFilePasswordWithAccountAuth, setFilePasswordWithAccountAuth } from '../services/fileProtectionService';
+import InputModal from '../components/InputModal';
 import { Linking } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { makeAvailableOffline, removeOffline, isOffline } from '../services/offlineService';
@@ -33,6 +35,7 @@ type FileRecord = {
   updated_at?: any;
   starred?: boolean;
   trashed?: boolean;
+  password_protected?: boolean;
 };
 
 // --- Screens ---
@@ -46,6 +49,9 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewItem, setPreviewItem] = useState<FileRecord | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [promptVisible, setPromptVisible] = useState(false);
+  const [promptTitle, setPromptTitle] = useState('');
+  const [onPromptConfirm, setOnPromptConfirm] = useState<(val: string)=>void>(()=>()=>{});
   // Optional WebView support without hard dependency during compile
   let WebViewComp: any = null;
   try { WebViewComp = (require('react-native-webview') as any).WebView; } catch {}
@@ -57,6 +63,21 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
 
   const openInlinePreview = async (item: FileRecord) => {
     try {
+      if (item.password_protected) {
+        // ask for file password first
+  setPromptTitle('Enter file password');
+        setOnPromptConfirm(() => async (val: string) => {
+          setPromptVisible(false);
+          const ok = await verifyFilePassword(item.id, val);
+          if (!ok) { Alert.alert('Incorrect password'); return; }
+          const url = await getFileUrl(item.path, 600);
+          setPreviewItem(item);
+          setPreviewUrl(url);
+          setPreviewVisible(true);
+        });
+        setPromptVisible(true);
+        return;
+      }
       const url = await getFileUrl(item.path, 600);
       setPreviewItem(item);
       setPreviewUrl(url);
@@ -85,6 +106,19 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
       icon: 'open-in-new',
       onPress: async () => {
         try {
+          if (currentItem.password_protected) {
+            setSheetVisible(false);
+            setPromptTitle('Enter file password');
+            setOnPromptConfirm(() => async (val: string) => {
+              setPromptVisible(false);
+              const ok = await verifyFilePassword(currentItem.id, val);
+              if (!ok) { Alert.alert('Incorrect password'); return; }
+              const url = await getFileUrl(currentItem.path, 300);
+              Linking.openURL(url);
+            });
+            setPromptVisible(true);
+            return;
+          }
           const url = await getFileUrl(currentItem.path, 300);
           setSheetVisible(false);
           Linking.openURL(url);
@@ -99,6 +133,20 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
       icon: 'link-variant',
       onPress: async () => {
         try {
+          if (currentItem.password_protected) {
+            setSheetVisible(false);
+            setPromptTitle('Enter file password');
+            setOnPromptConfirm(() => async (val: string) => {
+              setPromptVisible(false);
+              const ok = await verifyFilePassword(currentItem.id, val);
+              if (!ok) { Alert.alert('Incorrect password'); return; }
+              const url = await getFileUrl(currentItem.path, 600);
+              Clipboard.setString(url);
+              Alert.alert('Copied', 'Signed link copied to clipboard');
+            });
+            setPromptVisible(true);
+            return;
+          }
           const url = await getFileUrl(currentItem.path, 600);
           setSheetVisible(false);
           Clipboard.setString(url);
@@ -141,6 +189,72 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
         }
       },
     },
+    // Password protection actions
+    ...(!currentItem.password_protected ? [
+      {
+        key: 'protect',
+        label: 'Protect with password',
+        icon: 'lock-outline',
+        onPress: async () => {
+          setSheetVisible(false);
+          setPromptTitle('Set file password');
+          setOnPromptConfirm(() => async (val: string) => {
+            setPromptVisible(false);
+            if (!val || val.length < 4) { Alert.alert('Password too short'); return; }
+            try { await setFilePassword(currentItem.id, val); Alert.alert('Protected', 'Password set for this file'); }
+            catch (e:any) { Alert.alert('Failed', e?.message || String(e)); }
+          });
+          setPromptVisible(true);
+        },
+      },
+    ] : [
+      {
+        key: 'change-pass',
+        label: 'Change file password',
+        icon: 'lock-reset',
+        onPress: async () => {
+          setSheetVisible(false);
+          // Step 1: ask for account password
+          setPromptTitle('Enter your account password');
+          setOnPromptConfirm(() => async (accountPass: string) => {
+            setPromptVisible(false);
+            // Step 2: ask for new file password
+            setTimeout(() => {
+              setPromptTitle('Enter new file password');
+              setOnPromptConfirm(() => async (newPass: string) => {
+                setPromptVisible(false);
+                if (!newPass || newPass.length < 4) { Alert.alert('Password too short'); return; }
+                try {
+                  const email = auth().currentUser?.email || '';
+                  await setFilePasswordWithAccountAuth(currentItem.id, newPass, email, accountPass);
+                  Alert.alert('Updated', 'File password updated');
+                } catch (e:any) { Alert.alert('Failed', e?.message || String(e)); }
+              });
+              setPromptVisible(true);
+            }, 300);
+          });
+          setPromptVisible(true);
+        },
+      },
+      {
+        key: 'remove-pass',
+        label: 'Remove file password',
+        icon: 'lock-open-variant',
+        onPress: async () => {
+          setSheetVisible(false);
+          setPromptTitle('Enter your account password');
+          setOnPromptConfirm(() => async (accountPass: string) => {
+            setPromptVisible(false);
+            try {
+              const email = auth().currentUser?.email || '';
+              await clearFilePasswordWithAccountAuth(currentItem.id, email, accountPass);
+              Alert.alert('Removed', 'Password protection removed');
+            } catch (e:any) { Alert.alert('Failed', e?.message || String(e)); }
+          });
+          setPromptVisible(true);
+        },
+      },
+    ]),
     {
       key: 'delete',
       label: 'Move to bin',
@@ -190,6 +304,7 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
               updated_at: d.updated_at,
               starred: d.starred === true,
               trashed: d.trashed === true,
+              password_protected: d.password_protected === true,
             });
           });
           setFiles(rows.filter(r => !r.trashed));
@@ -349,6 +464,16 @@ export const HomeScreen = ({ navigation }: { navigation: any }) => {
           </View>
         </View>
       </Modal>
+
+      {/* Password/Input Prompt */}
+      <InputModal
+        visible={promptVisible}
+        title={promptTitle}
+        placeholder="Password"
+        secureTextEntry={true}
+        onConfirm={onPromptConfirm}
+        onCancel={() => setPromptVisible(false)}
+      />
     </View>
   );
 };
