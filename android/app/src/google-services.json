@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "429510629131",
+    "firebase_url": "https://stash-37011-default-rtdb.firebaseio.com",
+    "project_id": "stash-37011",
+    "storage_bucket": "stash-37011.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:429510629131:android:7836c8b7bf2b8d9e7df40e",
+        "android_client_info": {
+          "package_name": "com.securestash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-nZPRzPTG1N3r_tDhlyIPt0YGeqdOnWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,68 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "install-supabase-deps",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"install",
+				"@supabase/supabase-js",
+				"react-native-fs",
+				"base64-arraybuffer",
+				"react-native-url-polyfill"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "install-verify",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"install"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "install-modal",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"install",
+				"react-native-modal"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "install-clipboard-asyncstorage",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"install",
+				"@react-native-clipboard/clipboard",
+				"@react-native-async-storage/async-storage"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "pod-install-android-rebuild",
+			"type": "shell",
+			"command": "bash.exe",
+			"args": [
+				"-lc",
+				"echo Rebuild Android to link native modules; exit 0"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

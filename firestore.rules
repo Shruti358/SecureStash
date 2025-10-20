@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function authed() { return request.auth != null; }
+    function isOwner(ownerId) { return authed() && request.auth.uid == ownerId; }
+    function notExpired(ts) { return ts == null || request.time < ts; }
+
+    // Users profile
+    match /users/{userId} {
+      allow read, update, delete: if isOwner(userId);
+      allow create: if authed() && request.resource.id == request.auth.uid;
+    }
+
+    // Folders collection
+    match /folders/{folderId} {
+      allow create: if authed() && request.resource.data.owner_id == request.auth.uid;
+      allow update, delete: if authed() && isOwner(resource.data.owner_id);
+      allow read: if authed() && (isOwner(resource.data.owner_id) ||
+        exists(/databases/$(database)/documents/acls/$(request.auth.uid + '_' + folderId)) ||
+        exists(/databases/$(database)/documents/acls/$(folderId + '_' + request.auth.uid))
+      );
+    }
+
+    // Files collection
+    match /files/{fileId} {
+      allow create: if authed() && request.resource.data.owner_id == request.auth.uid;
+      allow update, delete: if authed() && isOwner(resource.data.owner_id);
+      allow read: if authed() && (isOwner(resource.data.owner_id) ||
+        // ACLs modeled as separate docs; allow if an ACL exists for this user and file
+        exists(/databases/$(database)/documents/acls/$(fileId + '_' + request.auth.uid))
+      );
+    }
+
+    // ACLs collection
+    // Doc id recommendation: `${item_id}_${shared_with}` for quick lookup.
+    // Fields: acl_id, item_id, item_type, shared_with, permission, shared_by, expires_at, created_at
+    match /acls/{aclId} {
+      allow create: if authed() && request.resource.data.shared_by == request.auth.uid;
+      allow read: if authed() && (
+        resource.data.shared_by == request.auth.uid ||
+        resource.data.shared_with == request.auth.uid
+      );
+      allow delete, update: if authed() && resource.data.shared_by == request.auth.uid;
+    }
+
+    // FileTypes static
+    match /fileTypes/{typeId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

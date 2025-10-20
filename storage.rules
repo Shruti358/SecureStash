@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Files stored under user directories: files/{uid}/{documentId}/{filename}
+    match /files/{userId}/{docId}/{fileName} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Optional public thumbnails
+    match /thumbnails/{userId}/{docId}/{fileName} {
+      allow read: if true;  // public thumbnails
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

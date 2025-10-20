@@ -1,0 +1,104 @@
+[debug] [2025-10-18T11:08:58.957Z] ----------------------------------------------------------------------
+[debug] [2025-10-18T11:08:58.960Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\bhask\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions
+[debug] [2025-10-18T11:08:58.960Z] CLI Version:   14.20.0
+[debug] [2025-10-18T11:08:58.960Z] Platform:      win32
+[debug] [2025-10-18T11:08:58.961Z] Node Version:  v22.19.0
+[debug] [2025-10-18T11:08:58.961Z] Time:          Sat Oct 18 2025 16:38:58 GMT+0530 (India Standard Time)
+[debug] [2025-10-18T11:08:58.961Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-18T11:08:59.282Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-18T11:08:59.283Z] > authorizing via signed-in user (bhaskarshah4235@gmail.com)
+[info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
+[debug] [2025-10-18T11:08:59.295Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-18T11:08:59.295Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-10-18T11:08:59.301Z] Emulator locator file path: C:\Users\bhask\AppData\Local\Temp\hub-stash-37011.json
+[debug] [2025-10-18T11:08:59.301Z] [hub] writing locator at C:\Users\bhask\AppData\Local\Temp\hub-stash-37011.json
+[debug] [2025-10-18T11:08:59.328Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-18T11:08:59.328Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-18T11:08:59.328Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-18T11:08:59.328Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] !  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, auth, firestore, database, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[debug] [2025-10-18T11:08:59.401Z] defaultcredentials: writing to file C:\Users\bhask\AppData\Roaming\firebase\bhaskarshah4235_gmail_com_application_default_credentials.json
+[debug] [2025-10-18T11:08:59.405Z] Setting GAC to C:\Users\bhask\AppData\Roaming\firebase\bhaskarshah4235_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\bhask\\AppData\\Roaming\\firebase\\bhaskarshah4235_gmail_com_application_default_credentials.json"}}
+[debug] [2025-10-18T11:08:59.407Z] Checked if tokens are valid: false, expires at: 1760781154392
+[debug] [2025-10-18T11:08:59.407Z] Checked if tokens are valid: false, expires at: 1760781154392
+[debug] [2025-10-18T11:08:59.407Z] > refreshing access token with scopes: []
+[debug] [2025-10-18T11:08:59.410Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-18T11:08:59.410Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-18T11:08:59.854Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-18T11:08:59.854Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-18T11:08:59.869Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/stash-37011/adminSdkConfig [none]
+[debug] [2025-10-18T11:09:00.720Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/stash-37011/adminSdkConfig 200
+[debug] [2025-10-18T11:09:00.720Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/stash-37011/adminSdkConfig {"projectId":"stash-37011","databaseURL":"https://stash-37011-default-rtdb.firebaseio.com","storageBucket":"stash-37011.firebasestorage.app"}
+[info] i  functions: Watching "C:\Users\bhask\OneDrive\Desktop\SecureStash-secure-update\SecureStash-secure-update\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\bhask\\OneDrive\\Desktop\\SecureStash-secure-update\\SecureStash-secure-update\\functions\" for Cloud Functions..."}}
+[debug] [2025-10-18T11:09:00.777Z] Validating nodejs source
+[debug] [2025-10-18T11:09:01.908Z] > [functions] package.json contents: {
+  "name": "securestash-functions",
+  "scripts": {
+    "build": "tsc",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "lint": "eslint --ext .ts ./src"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "eslint": "^8.57.0",
+    "typescript": "^5.6.2"
+  },
+  "private": true
+}
+[debug] [2025-10-18T11:09:01.908Z] Building nodejs source
+[debug] [2025-10-18T11:09:01.908Z] Failed to find version of module node: reached end of search path C:\Users\bhask\OneDrive\Desktop\SecureStash-secure-update\SecureStash-secure-update\functions\node_modules
+[warn] !  functions: Your requested "node" version "20" doesn't match your global version "22". Using node@22 from host. 
+[debug] [2025-10-18T11:09:01.912Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-18T11:09:01.921Z] Found firebase-functions binary at 'C:\Users\bhask\OneDrive\Desktop\SecureStash-secure-update\SecureStash-secure-update\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8852
+
+[debug] [2025-10-18T11:09:02.947Z] Got response from /__/functions.yaml {"endpoints":{"createFileMetadata":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"callableTrigger":{},"entryPoint":"createFileMetadata"},"starFile":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"callableTrigger":{},"entryPoint":"starFile"},"deleteFile":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"callableTrigger":{},"entryPoint":"deleteFile"},"createShare":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"callableTrigger":{},"entryPoint":"createShare"},"revokeShare":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"callableTrigger":{},"entryPoint":"revokeShare"},"getDownloadUrl":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"httpsTrigger":{},"entryPoint":"getDownloadUrl"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: createFileMetadata, starFile, deleteFile, createShare, revokeShare, getDownloadUrl. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: createFileMetadata, starFile, deleteFile, createShare, revokeShare, getDownloadUrl."}}
+[info] +  functions[us-central1-createFileMetadata]: http function initialized (http://127.0.0.1:5001/stash-37011/us-central1/createFileMetadata). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/stash-37011/us-central1/createFileMetadata)."}}
+[info] +  functions[us-central1-starFile]: http function initialized (http://127.0.0.1:5001/stash-37011/us-central1/starFile). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/stash-37011/us-central1/starFile)."}}
+[info] +  functions[us-central1-deleteFile]: http function initialized (http://127.0.0.1:5001/stash-37011/us-central1/deleteFile). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/stash-37011/us-central1/deleteFile)."}}
+[info] +  functions[us-central1-createShare]: http function initialized (http://127.0.0.1:5001/stash-37011/us-central1/createShare). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/stash-37011/us-central1/createShare)."}}
+[info] +  functions[us-central1-revokeShare]: http function initialized (http://127.0.0.1:5001/stash-37011/us-central1/revokeShare). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/stash-37011/us-central1/revokeShare)."}}
+[info] +  functions[us-central1-getDownloadUrl]: http function initialized (http://127.0.0.1:5001/stash-37011/us-central1/getDownloadUrl). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/stash-37011/us-central1/getDownloadUrl)."}}
+[debug] [2025-10-18T11:09:07.029Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2025-10-18T12:56:57.415Z] Received signal SIGHUP 1
+[info]  
+[info] i  emulators: Received SIGHUP for the first time. Starting a clean shutdown. 
+[info] i  emulators: Please wait for a clean shutdown or send the SIGHUP signal again to stop right now. 
+[info] i  emulators: Shutting down emulators. {"metadata":{"emulator":{"name":"hub"},"message":"Shutting down emulators."}}
+[info] i  ui: Stopping Emulator UI {"metadata":{"emulator":{"name":"ui"},"message":"Stopping Emulator UI"}}
+[info] i  functions: Stopping Functions Emulator {"metadata":{"emulator":{"name":"functions"},"message":"Stopping Functions Emulator"}}
+[info] i  eventarc: Stopping Eventarc Emulator {"metadata":{"emulator":{"name":"eventarc"},"message":"Stopping Eventarc Emulator"}}
+[info] i  tasks: Stopping Cloud Tasks Emulator {"metadata":{"emulator":{"name":"tasks"},"message":"Stopping Cloud Tasks Emulator"}}
+[info] i  hub: Stopping emulator hub {"metadata":{"emulator":{"name":"hub"},"message":"Stopping emulator hub"}}
+[debug] [2025-10-18T12:56:57.444Z] Emulator locator file path: C:\Users\bhask\AppData\Local\Temp\hub-stash-37011.json
+[info] i  logging: Stopping Logging Emulator {"metadata":{"emulator":{"name":"logging"},"message":"Stopping Logging Emulator"}}
+[debug] [2025-10-18T12:56:57.461Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
