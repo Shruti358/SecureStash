@@ -1,0 +1,36 @@
+name: Publish APK to web
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find release asset (app-release.apk)
+        id: find
+        uses: joutvhu/download-release-asset@v1
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          tag: ${{ github.event.release.tag_name }}
+          file: app-release.apk
+          path: web/downloads
+
+      - name: Commit & push
+        run: |
+          if [ -f web/downloads/app-release.apk ]; then
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+            git add web/downloads/app-release.apk
+            git commit -m "chore(apk): publish from release ${GITHUB_REF_NAME}"
+            git push
+          else
+            echo "No app-release.apk found in release assets." && exit 1
+          fi
