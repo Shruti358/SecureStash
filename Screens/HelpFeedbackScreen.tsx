@@ -13,6 +13,13 @@ const FAQ: FaqItem[] = [
   { q: 'How do I restore a file from Bin?', a: 'Open Bin from the drawer, tap Restore on the item to move it back to Home.' },
   { q: 'How do I permanently delete a file?', a: 'In Bin, tap Delete on an item. You will be asked to confirm before the permanent deletion.' },
   { q: 'How do I change my password?', a: 'Open Settings from the drawer, go to Change Password, re-enter your current password, and enter your new one.' },
+  { q: 'How do I protect a file with a password?', a: 'Open a file\'s 3-dot menu and choose Protect with password. You\'ll set a password that will be required to open, preview, or copy the file link.' },
+  { q: 'How does file password protection work?', a: 'Your file password is never stored in plain text. We derive a salted hash using PBKDF2 (SHA-256) on-device and only store the hash and salt with the file metadata. When you or a collaborator opens the file, we verify by hashing what they enter and comparing it to the stored hash.' },
+  { q: 'Which actions require the file\'s password?', a: 'Opening a file, inline preview, and copying a link for a protected file all require entering the correct file password first.' },
+  { q: 'I forgot a file\'s password. What can I do?', a: 'Passwords cannot be recovered, but the owner can change or remove the file password after re-authenticating their account. Open the 3-dot menu on the file and choose Change file password or Remove file password, then sign in again when prompted.' },
+  { q: 'Do shared users also need the file password?', a: 'Yes. If a file is protected, anyone with access (including via sharing) must enter the correct file password to open or preview it.' },
+  { q: 'Does password protection encrypt the actual file bytes?', a: 'No. Password protection gates access in the app by verifying a password-derived hash before generating access. The file bytes themselves are not end-to-end encrypted. Avoid sharing file passwords and remove protection when no longer needed.' },
+  { q: 'Can I remove a file\'s password later?', a: 'Yes. Use Remove file password from the 3-dot menu. For your security, removing requires re-authenticating your account first.' },
 ];
 
 export default function HelpFeedbackScreen({ navigation }: Props) {

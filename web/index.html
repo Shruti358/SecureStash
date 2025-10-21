@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SecureStash • Android APK Download</title>
+    <meta name="description" content="Download the latest SecureStash Android APK." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <header class="header">
+          <div class="logo">🔐</div>
+          <div>
+            <h1>SecureStash</h1>
+            <p class="tagline">Private. Secure. Yours.</p>
+          </div>
+        </header>
+
+        <div class="content">
+          <p class="lead">Download the latest Android APK and install it on your device.</p>
+
+          <div class="actions">
+            <!-- Update this URL to where your APK is hosted. If you place the file at web/downloads/app-release.apk, this default will work when hosted. -->
+            <a id="downloadBtn" class="btn primary" href="./downloads/app-release.apk" download>
+              ⬇️ Download APK
+            </a>
+            <a class="btn subtle" id="mirrorLink" href="#" target="_blank" rel="noopener">Mirror link</a>
+          </div>
+
+          <div class="meta">
+            <span id="version">Version: 1.0</span>
+            <span id="updated">Updated: <span data-updated></span></span>
+          </div>
+
+          <div class="grid">
+            <div class="panel">
+              <h3>Install tips</h3>
+              <ol>
+                <li>Download the APK on your Android device.</li>
+                <li>When prompted, allow installs from this source (Unknown sources).</li>
+                <li>Open SecureStash and sign in.</li>
+              </ol>
+              <p class="note">Note: Some devices require enabling “Install unknown apps” in Settings ➜ Security.</p>
+            </div>
+
+            <div class="panel qr">
+              <h3>Scan to download</h3>
+              <div id="qrcode" class="qrcode"></div>
+              <p class="muted small">Open camera or QR app to scan.</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <p class="muted small">© <span data-year></span> SecureStash • <a href="#" id="privacyLink">Privacy</a></p>
+        </footer>
+      </section>
+    </main>
+
+    <!-- Minimal QR code generator -->
+    <script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+  </html>
