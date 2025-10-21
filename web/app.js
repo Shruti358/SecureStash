@@ -29,4 +29,16 @@
       correctLevel: QRCode.CorrectLevel.M
     });
   }
+
+  // Show warning if APK is missing
+  const downloadBtn = document.getElementById('downloadBtn');
+  const missingNote = document.getElementById('missingNote');
+  if(downloadBtn && missingNote){
+    const apkUrl = new URL(downloadBtn.getAttribute('href'), window.location.href).href;
+    fetch(apkUrl, { method: 'HEAD' })
+      .then(res => {
+        if(!res.ok){ missingNote.classList.remove('hidden'); }
+      })
+      .catch(() => missingNote.classList.remove('hidden'));
+  }
 })();
